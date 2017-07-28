@@ -47,6 +47,13 @@ let make_pdf_string s =
   Buffer.add_char b ')';
   Buffer.contents b
 
+let make_pdf_string_hex shex =
+  Buffer.clear b;
+  Buffer.add_char b '<';
+  Buffer.add_string b shex;
+  Buffer.add_char b '>';
+  Buffer.contents b
+
 (* We have two kinds of flat data to write: Strings and streams (we cannot
 represent streams as strings, since there is a langauge limit on the length of
 strings. *)
@@ -158,6 +165,7 @@ and strings_of_pdf f changetable = function
   | Pdf.Integer n ->  f (WString (string_of_int n))
   | Pdf.Real r -> f (WString (format_real r))
   | Pdf.String s -> f (WString (make_pdf_string s))
+  | Pdf.StringHex shex -> f (WString (make_pdf_string_hex shex))
   | Pdf.Name n -> f (WString (make_pdf_name n))
   | Pdf.Array elts ->
       f (WString "[");

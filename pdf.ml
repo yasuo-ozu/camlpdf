@@ -77,15 +77,16 @@ since the Pdio.input in the ToGet part of a stream contains functional
 values. *)
 type pdfobject =
   | Null
-  | Boolean of bool
-  | Integer of int
-  | Real of float
-  | String of string
-  | Name of string 
-  | Array of pdfobject list
+  | Boolean    of bool
+  | Integer    of int
+  | Real       of float
+  | String     of string
+  | StringHex  of string
+  | Name       of string 
+  | Array      of pdfobject list
   | Dictionary of (string * pdfobject) list
-  | Stream of (pdfobject * stream) ref
-  | Indirect of int
+  | Stream     of (pdfobject * stream) ref
+  | Indirect   of int
 
 (* For debug. Filled in by Pdfwrite *)
 let string_of_pdf : (pdfobject -> string) ref = ref (function _ -> "") 

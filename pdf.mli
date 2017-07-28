@@ -14,15 +14,16 @@ type stream =
 A PDF file is basically a directed graph of objects. *)
 type pdfobject =
   | Null
-  | Boolean of bool
-  | Integer of int
-  | Real of float
-  | String of string
-  | Name of string
-  | Array of pdfobject list
+  | Boolean    of bool
+  | Integer    of int
+  | Real       of float
+  | String     of string
+  | StringHex  of string
+  | Name       of string
+  | Array      of pdfobject list
   | Dictionary of (string * pdfobject) list
-  | Stream of (pdfobject * stream) ref
-  | Indirect of int
+  | Stream     of (pdfobject * stream) ref
+  | Indirect   of int
 
 (** {2 The Object map} *)
 
