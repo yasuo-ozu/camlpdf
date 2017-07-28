@@ -110,6 +110,7 @@ let string_of_lexeme = function
   | LexInt i -> Pdfwrite.string_of_pdf (Pdf.Integer i)
   | LexReal f -> Pdfwrite.string_of_pdf (Pdf.Real f)
   | LexString s -> Pdfwrite.string_of_pdf (Pdf.String s)
+  | LexStringHex s -> Pdfwrite.string_of_pdf (Pdf.StringHex s)
   | LexName s -> s
   | LexLeftSquare -> "["
   | LexRightSquare -> "]"

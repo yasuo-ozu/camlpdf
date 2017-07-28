@@ -8,16 +8,17 @@ the same data type for this very basic lexing module as for the main lexing in
 Pdfread. Eventually, we may unify this with the parsing type too. *)
 type t =
   | LexNull
-  | LexBool of bool
-  | LexInt of int
-  | LexReal of float
-  | LexString of string
-  | LexName of string
+  | LexBool      of bool
+  | LexInt       of int
+  | LexReal      of float
+  | LexString    of string
+  | LexStringHex of string
+  | LexName      of string
   | LexLeftSquare
   | LexRightSquare
   | LexLeftDict
   | LexRightDict
-  | LexStream of Pdf.stream
+  | LexStream    of Pdf.stream
   | LexEndStream
   | LexObj
   | LexEndObj

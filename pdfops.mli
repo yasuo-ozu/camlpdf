@@ -48,6 +48,7 @@ type t =
   | Op_Tm of Pdftransform.transform_matrix
   | Op_T'
   | Op_Tj of string
+  | Op_Tj_hex of string
   | Op_TJ of Pdf.pdfobject
   | Op_' of string
   | Op_'' of float * float * string

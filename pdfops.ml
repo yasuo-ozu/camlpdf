@@ -49,6 +49,7 @@ type t =
   | Op_Tm of Pdftransform.transform_matrix (* Set text and line matrices *)
   | Op_T' (* T* operator. Move text to the next line *)
   | Op_Tj of string (* Show text string *)
+  | Op_Tj_hex of string
   | Op_TJ of Pdf.pdfobject (* Show many text strings *)
   | Op_' of string (* Move to next line and show text *)
   | Op_'' of float * float * string (* Ditto, extra parameters *)
@@ -165,6 +166,7 @@ let lexemes_of_op f = function
        f (Op "Tm")
   | Op_T' -> f (Op "T*")
   | Op_Tj s -> f (Obj (Pdfgenlex.LexString s)); f (Op "Tj")
+  | Op_Tj_hex s -> f (Obj (Pdfgenlex.LexStringHex s)); f (Op "Tj")
   | Op_TJ pdfobject -> f (PdfObj pdfobject); f (Op "TJ")
   | Op_' s -> f (Obj (Pdfgenlex.LexString s)); f (Op "'")
   | Op_'' (k, k', s) -> 
