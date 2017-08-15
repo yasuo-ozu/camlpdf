@@ -29,13 +29,14 @@ type fontfile =
   | FontFile3 of int
 
 type fontdescriptor = {
-    ascent   : float;
-    descent  : float;
-    leading  : float;
-    avgwidth : float;
-    maxwidth : float;
-    stemv    : float;
-    fontfile : fontfile option;
+    italicangle : float;
+    ascent      : float;
+    descent     : float;
+    leading     : float;
+    avgwidth    : float;
+    maxwidth    : float;
+    stemv       : float;
+    fontfile    : fontfile option;
   }
 
 type differences = (string * int) list
@@ -208,15 +209,20 @@ let read_fontdescriptor pdf font =
         match Pdf.lookup_direct pdf "/StemV" fontdescriptor with
         | Some x -> Pdf.getnum x
         | None   -> 0.
+      in let italicangle =
+        match Pdf.lookup_direct pdf "/ItalicAngle" fontdescriptor with
+        | Some x -> Pdf.getnum x
+        | None   -> 0.
       in
         Some {
-          ascent   = ascent;
-          descent  = descent;
-          leading  = leading;
-          stemv    = stemv;
-          avgwidth = avgwidth;
-          maxwidth = maxwidth;
-          fontfile = fontfile;
+          ascent      = ascent;
+          descent     = descent;
+          italicangle = italicangle;
+          leading     = leading;
+          stemv       = stemv;
+          avgwidth    = avgwidth;
+          maxwidth    = maxwidth;
+          fontfile    = fontfile;
         }
 
 (* Read the widths from a font. Normally in the font descriptor, but in Type3

@@ -22,13 +22,14 @@ type fontfile =
   | FontFile3 of int
 
 type fontdescriptor = {
-    ascent   : float;
-    descent  : float;
-    leading  : float;
-    avgwidth : float;
-    maxwidth : float;
-    stemv    : float;
-    fontfile : fontfile option;
+    italicangle : float;
+    ascent      : float;
+    descent     : float;
+    leading     : float;
+    avgwidth    : float;
+    maxwidth    : float;
+    stemv       : float;
+    fontfile    : fontfile option;
   }
 
 type differences = (string * int) list
