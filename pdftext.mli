@@ -21,13 +21,15 @@ type fontfile =
   | FontFile2 of int
   | FontFile3 of int
 
-type fontdescriptor =
-  {ascent : float;
-   descent : float;
-   leading : float;
-   avgwidth : float;
-   maxwidth : float;
-   fontfile : fontfile option}
+type fontdescriptor = {
+    ascent   : float;
+    descent  : float;
+    leading  : float;
+    avgwidth : float;
+    maxwidth : float;
+    stemv    : float;
+    fontfile : fontfile option;
+  }
 
 type differences = (string * int) list
 
