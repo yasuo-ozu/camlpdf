@@ -29,8 +29,8 @@ external inflate_end: stream -> unit = "camlzip_inflateEnd"
 let buffer_size = 1024
 
 let compress ?(level = 6) ?(header = true) refill flush =
-  let inbuf = String.create buffer_size
-  and outbuf = String.create buffer_size in
+  let inbuf = Bytes.create buffer_size
+  and outbuf = Bytes.create buffer_size in
   let zs = deflate_init level header in
   let rec compr inpos inavail =
     if inavail = 0 then begin
@@ -53,8 +53,8 @@ let compress ?(level = 6) ?(header = true) refill flush =
 
 
 let uncompress ?(header = true) refill flush =
-  let inbuf = String.create buffer_size
-  and outbuf = String.create buffer_size in
+  let inbuf = Bytes.create buffer_size
+  and outbuf = Bytes.create buffer_size in
   let zs = inflate_init header in
   let rec uncompr inpos inavail =
     if inavail = 0 then begin
