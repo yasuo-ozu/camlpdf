@@ -163,7 +163,7 @@ type t =
 (* The null PDF document. *)
 let empty () =
   {major = 1;
-   minor = 1;
+   minor = 7;
    root = 0;
    objects =
      {maxobjnum = 0;
