@@ -10,6 +10,11 @@ type style =
   | Inset
   | UnderlineStyle
 
+type colour =
+  | DeviceGray of float
+  | DeviceRGB  of float * float * float
+  | DeviceCMYK of float * float * float * float
+
 type border =
   {width : float;
    vradius : float;
@@ -53,7 +58,7 @@ and t =
    subject : string option;
    rectangle : float * float * float * float;
    border : border;
-   colour : (int * int * int) option;
+   colour : colour option;
    annotrest : Pdf.pdfobject}
 
 (* Read a single annotation *)
@@ -139,10 +144,17 @@ let rec read_annotation pdf annot =
              dasharray = [||]}
   in let colour =
     match Pdf.lookup_direct pdf "/C" annot with
+    | Some (Pdf.Array [gray]) ->
+        Some (DeviceGray (Pdf.getnum (Pdf.direct pdf gray)))
     | Some (Pdf.Array [r; g; b]) ->
-        Some (int_of_float (Pdf.getnum (Pdf.direct pdf r)),
-              int_of_float (Pdf.getnum (Pdf.direct pdf g)),
-              int_of_float (Pdf.getnum (Pdf.direct pdf b)))
+        Some (DeviceRGB (Pdf.getnum (Pdf.direct pdf r),
+                         Pdf.getnum (Pdf.direct pdf g),
+                         Pdf.getnum (Pdf.direct pdf b)))
+    | Some (Pdf.Array [c; m; y; k]) ->
+        Some (DeviceCMYK (Pdf.getnum (Pdf.direct pdf c),
+                          Pdf.getnum (Pdf.direct pdf m),
+                          Pdf.getnum (Pdf.direct pdf y),
+                          Pdf.getnum (Pdf.direct pdf k)))
     | _ -> None
   in let annotrest =
     match Pdf.direct pdf annot with
@@ -213,8 +225,10 @@ let obj_of_annot t =
     | Pdf.Dictionary d' -> d @ d'
     | _ -> raise (Pdf.PDFError "Bad annotation dictionary") in
   let colorize d = match t.colour with
-    | None         -> d
-    | Some (r,g,b) -> (("/C", Pdf.Array [Pdf.Integer r; Pdf.Integer g; Pdf.Integer b])) :: d
+    | None                           -> d
+    | Some (DeviceGray(gray))        -> ("/C", Pdf.Array [Pdf.Real gray]) :: d
+    | Some (DeviceRGB (r, g, b))     -> ("/C", Pdf.Array [Pdf.Real r; Pdf.Real g; Pdf.Real b]) :: d
+    | Some (DeviceCMYK (c, m, y, k)) -> ("/C", Pdf.Array [Pdf.Real c; Pdf.Real m; Pdf.Real y; Pdf.Real k]) :: d
   in
   let subject d = match t.subject with
     | None   -> d
