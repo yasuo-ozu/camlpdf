@@ -267,3 +267,5 @@ val deep_copy : t -> t
 
 val string_of_pdf : (pdfobject -> string) ref
 
+val add_trailerdict_entry : t -> string -> pdfobject -> t
+

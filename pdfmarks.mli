@@ -4,7 +4,8 @@
 type t =
   {level : int;
    text : string;
-   target : Pdfdest.t;
+   dest : Pdfdest.t;
+   action : Pdfaction.t;
    isopen : bool}
 
 (** Debug string from a bookmark. *)

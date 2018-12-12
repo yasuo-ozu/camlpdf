@@ -54,9 +54,9 @@ let merge_bookmarks changes pdfs ranges pdf =
             | Pdfdest.OtherDocPageNumber _ -> 0
             | Pdfdest.PageObject i -> i
       in
-        let objnum = pageobjectnumber_of_target mark.Pdfmarks.target in
+        let objnum = pageobjectnumber_of_target mark.Pdfmarks.dest in
           (*Printf.printf "Considering objnum %i for inclusion...\n" objnum;*)
-          if mem objnum oldnums || mark.Pdfmarks.target = Pdfdest.NullDestination (* If this bookmark is to be included... *)
+          if mem objnum oldnums || mark.Pdfmarks.dest = Pdfdest.NullDestination (* If this bookmark is to be included... *)
             then
               let change_target_destinationpage target n =
                 let change_targetpage = function
@@ -75,10 +75,10 @@ let merge_bookmarks changes pdfs ranges pdf =
                   | Pdfdest.FitBV (t, a) -> Pdfdest.FitBV (change_targetpage t, a)
               in
                 Some
-                  {mark with Pdfmarks.target =
-                     if mark.Pdfmarks.target = Pdfdest.NullDestination
+                  {mark with Pdfmarks.dest =
+                     if mark.Pdfmarks.dest = Pdfdest.NullDestination
                        then Pdfdest.NullDestination
-                       else change_target_destinationpage mark.Pdfmarks.target (lookup_failnull objnum changes)}
+                       else change_target_destinationpage mark.Pdfmarks.dest (lookup_failnull objnum changes)}
            else
              None
       in
