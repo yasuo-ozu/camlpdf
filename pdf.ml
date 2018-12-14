@@ -980,4 +980,18 @@ let deep_copy from =
    was_linearized = from.was_linearized;
    saved_encryption = from.saved_encryption}
 
+let add_trailerdict_entry pdf key value =
+  match lookup_direct pdf "/Root" pdf.trailerdict with
+  | None -> raise (PDFError "Bad PDF: no root")
+  | Some catalog ->
+      let catalog' =
+        add_dict_entry catalog key value
+      in
+        let newcatalognum = addobj pdf catalog' in
+          {pdf with
+            root = newcatalognum;
+            trailerdict =
+              add_dict_entry
+                pdf.trailerdict "/Root" (Indirect newcatalognum)}
+
 

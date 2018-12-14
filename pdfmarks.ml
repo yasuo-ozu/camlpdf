@@ -4,11 +4,12 @@ open Pdfutil
 type t =
   {level : int;
    text : string;
-   target : Pdfdest.t;
+   dest   : Pdfdest.t;
+   action : Pdfaction.t;
    isopen : bool}
 
 let string_of_bookmark m =
-   Printf.sprintf "%i %s %s %b\n" m.level m.text (Pdfdest.string_of_destination m.target) m.isopen
+   Printf.sprintf "%i %s %s %b\n" m.level m.text (Pdfdest.string_of_destination m.dest) m.isopen
 
 let remove_bookmarks pdf =
   match Pdf.lookup_direct pdf "/Root" pdf.Pdf.trailerdict with
@@ -160,18 +161,22 @@ let rec add_prev (Br (i, obj, children, isopen)) =
 
 (* Make a node from a given title, destination page number in a given PDF ond
 open flag. *)
-let node_of_line pdf title target =
+let node_of_line pdf title dest action =
   Pdf.Dictionary
     (("/Title", Pdf.String title)::
-     let dest = Pdfdest.pdfobject_of_destination target in
-       if dest = Pdf.Null then [] else [("/Dest", dest)])
+     let dest = Pdfdest.pdfobject_of_destination dest in
+     let action = Pdfaction.pdfobject_of_action action in
+       if dest = Pdf.Null then
+         (if action = Pdf.Null then [] else [("/A", action)])
+       else
+         [("/Dest", dest)])
 
 (* Make an ntree list from a list of parsed bookmark lines. *)
 let rec make_outline_ntree source pdf = function
   | [] -> []
   | h::t ->
       let lower, rest = cleavewhile (fun {level = n'} -> n' > h.level) t in
-        let node = node_of_line pdf h.text h.target in
+        let node = node_of_line pdf h.text h.dest h.action in
           Br (fresh source pdf, node, make_outline_ntree source pdf lower, h.isopen)
             ::make_outline_ntree source pdf rest
 
@@ -193,18 +198,7 @@ let add_bookmarks parsed pdf =
         (* Add the objects to the pdf *)
         iter (function x -> ignore (Pdf.addobj_given_num pdf x)) pairs;
         (* Replace the /Outlines entry in the document catalog. *)
-        match Pdf.lookup_direct pdf "/Root" pdf.Pdf.trailerdict with
-        | None -> raise (Pdf.PDFError "Bad PDF: no root")
-        | Some catalog ->
-            let catalog' =
-              Pdf.add_dict_entry catalog "/Outlines" (Pdf.Indirect tree_root_num)
-            in
-              let newcatalognum = Pdf.addobj pdf catalog' in
-                {pdf with
-                  Pdf.root = newcatalognum;
-                  Pdf.trailerdict =
-                    Pdf.add_dict_entry
-                      pdf.Pdf.trailerdict "/Root" (Pdf.Indirect newcatalognum)}
+        Pdf.add_trailerdict_entry pdf "/Outlines" (Pdf.Indirect tree_root_num)
 
 (* Read bookmarks *)
 let rec traverse_outlines_lb indent_lb pdf outlines output =
@@ -230,7 +224,7 @@ and do_until_no_next_lb indent_lb pdf outline output =
         | Some (Pdf.Integer i) when i > 0 -> true
         | _ -> false
       in
-        output {level = !indent_lb; text = s; target = page; isopen = opn}
+        output {level = !indent_lb; text = s; dest = page; action = NullAction; isopen = opn}
     | _ -> ()
     end;
     incr indent_lb;
