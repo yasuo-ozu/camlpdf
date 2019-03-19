@@ -1,4 +1,4 @@
-(* PDF Bookmarks *)
+    (* PDF Bookmarks *)
 open Pdfutil
 
 type t =
